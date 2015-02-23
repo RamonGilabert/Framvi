@@ -31,6 +31,9 @@
 
     NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://ramongilabert.com"]];
     [self.webView loadRequest:requestURL];
+
+    self.webView.scalesPageToFit = YES;
+    self.webView.allowsInlineMediaPlayback = YES;
 }
 
 @end
