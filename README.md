@@ -2,7 +2,7 @@
 
 A nice chrome-less solution to view FramerJS prototypes or another way to explore the net based on gestures.
 
-## Number formulas
+## Featuring
 
 It adds gestures in it as swipe, tap, or pan with all the integration of webKit.
 
