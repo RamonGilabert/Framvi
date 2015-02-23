@@ -15,6 +15,7 @@
 		F63E43291A9BB8E000343A10 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63E43281A9BB8E000343A10 /* Images.xcassets */; };
 		F63E432C1A9BB8E000343A10 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F63E432A1A9BB8E000343A10 /* LaunchScreen.xib */; };
 		F63E43381A9BB8E000343A10 /* FramviTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F63E43371A9BB8E000343A10 /* FramviTests.m */; };
+		F63E43421A9BB9DE00343A10 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = F63E43411A9BB9DE00343A10 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		F63E43311A9BB8E000343A10 /* FramviTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FramviTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63E43361A9BB8E000343A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F63E43371A9BB8E000343A10 /* FramviTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FramviTests.m; sourceTree = "<group>"; };
+		F63E43411A9BB9DE00343A10 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 		F63E430C1A9BB8E000343A10 = {
 			isa = PBXGroup;
 			children = (
+				F63E43411A9BB9DE00343A10 /* README.md */,
 				F63E43171A9BB8E000343A10 /* Framvi */,
 				F63E43341A9BB8E000343A10 /* FramviTests */,
 				F63E43161A9BB8E000343A10 /* Products */,
@@ -224,6 +227,7 @@
 			files = (
 				F63E431E1A9BB8E000343A10 /* AppDelegate.m in Sources */,
 				F63E431B1A9BB8E000343A10 /* main.m in Sources */,
+				F63E43421A9BB9DE00343A10 /* README.md in Sources */,
 				F63E43241A9BB8E000343A10 /* ViewController.m in Sources */,
 				F63E43211A9BB8E000343A10 /* Framvi.xcdatamodeld in Sources */,
 			);
@@ -416,6 +420,7 @@
 				F63E433D1A9BB8E000343A10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F63E433E1A9BB8E000343A10 /* Build configuration list for PBXNativeTarget "FramviTests" */ = {
 			isa = XCConfigurationList;
@@ -424,6 +429,7 @@
 				F63E43401A9BB8E000343A10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
