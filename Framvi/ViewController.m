@@ -8,20 +8,29 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+@interface ViewController () <UIWebViewDelegate>
+
+@property CGFloat deviceWidth;
+@property CGFloat deviceHeight;
+@property UIWebView *webView;
 
 @end
 
 @implementation ViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-}
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    self.deviceWidth = [UIScreen mainScreen].bounds.size.width;
+    self.deviceHeight = [UIScreen mainScreen].bounds.size.height;
+
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.deviceWidth, self.deviceHeight)];
+    self.webView.delegate = self;
+    [self.view addSubview:self.webView];
+
+    NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://ramongilabert.com"]];
+    [self.webView loadRequest:requestURL];
 }
 
 @end
