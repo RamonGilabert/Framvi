@@ -13,6 +13,7 @@
 @property CGFloat deviceWidth;
 @property CGFloat deviceHeight;
 @property UIWebView *webView;
+@property NSTimer *timerSelector;
 
 @end
 
@@ -34,6 +35,50 @@
 
     self.webView.scalesPageToFit = YES;
     self.webView.allowsInlineMediaPlayback = YES;
+
+    self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(checkIfFramerIsOpened:) userInfo:nil repeats:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    [self checkIfFramerIsOpened:0];
+}
+
+- (void)checkIfFramerIsOpened:(NSTimer *)timer
+{
+    if ([self isValidURL:[NSURL URLWithString:@"http://192.168.1.130:8000"]]) {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *alertActionOpen = [UIAlertAction actionWithTitle:@"Open" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.130:8000/"]];
+            [self.webView loadRequest:requestURL];
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }];
+        UIAlertAction *alertActionClose = [UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }];
+
+        [alertController addAction:alertActionOpen];
+        [alertController addAction:alertActionClose];
+
+        [self presentViewController:alertController animated:YES completion:nil];
+
+        [self.timerSelector invalidate];
+    }
+}
+
+- (BOOL)isValidURL:(NSURL *)usedURL
+{
+    NSURLRequest *requestFramer = [NSURLRequest requestWithURL:usedURL];
+    NSHTTPURLResponse *response = nil;
+    NSError *error = nil;
+    [NSURLConnection sendSynchronousRequest:requestFramer returningResponse:&response error:&error];
+    if (error || response.statusCode == 404) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 @end
