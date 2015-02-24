@@ -14,6 +14,9 @@
 @property CGFloat deviceHeight;
 @property UIWebView *webView;
 @property NSTimer *timerSelector;
+@property BOOL isFramerOpenedAlready;
+@property CGFloat valueOfTimer;
+@property UIAlertController *alertControllerOpenFramer;
 
 @end
 
@@ -26,6 +29,8 @@
     self.deviceWidth = [UIScreen mainScreen].bounds.size.width;
     self.deviceHeight = [UIScreen mainScreen].bounds.size.height;
 
+    self.isFramerOpenedAlready = NO;
+
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.deviceWidth, self.deviceHeight)];
     self.webView.delegate = self;
     [self.view addSubview:self.webView];
@@ -36,35 +41,50 @@
     self.webView.scalesPageToFit = YES;
     self.webView.allowsInlineMediaPlayback = YES;
 
-    self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(checkIfFramerIsOpened:) userInfo:nil repeats:YES];
+    self.valueOfTimer = 1;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
 
-    [self checkIfFramerIsOpened:0];
+    [self checkFramer:0];
+
+    self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
+
+    self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
 }
 
-- (void)checkIfFramerIsOpened:(NSTimer *)timer
+- (void)checkFramer:(NSTimer *)timer
 {
-    if ([self isValidURL:[NSURL URLWithString:@"http://192.168.1.130:8000"]]) {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
+    BOOL isAValidURL = [self isValidURL:[NSURL URLWithString:@"http://192.168.1.130:8000"]];
+
+    if (!self.isFramerOpenedAlready && isAValidURL && timer) {
+        self.valueOfTimer = 100;
         UIAlertAction *alertActionOpen = [UIAlertAction actionWithTitle:@"Open" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.130:8000/"]];
             [self.webView loadRequest:requestURL];
-            [alertController dismissViewControllerAnimated:YES completion:nil];
+            [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
+            self.valueOfTimer = 10;
+            self.isFramerOpenedAlready = YES;
         }];
         UIAlertAction *alertActionClose = [UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-            [alertController dismissViewControllerAnimated:YES completion:nil];
+            [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
+            self.valueOfTimer = 1;
+            self.isFramerOpenedAlready = NO;
         }];
 
-        [alertController addAction:alertActionOpen];
-        [alertController addAction:alertActionClose];
+        [self.alertControllerOpenFramer addAction:alertActionOpen];
+        [self.alertControllerOpenFramer addAction:alertActionClose];
 
-        [self presentViewController:alertController animated:YES completion:nil];
-
-        [self.timerSelector invalidate];
+        if (![self.alertControllerOpenFramer isFirstResponder]) {
+            [self presentViewController:self.alertControllerOpenFramer animated:YES completion:nil];
+        }
+    } else if (!self.isFramerOpenedAlready && isAValidURL && !timer) {
+        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.130:8000/"]];
+        [self.webView loadRequest:requestURL];
+        self.valueOfTimer = 10;
+        self.isFramerOpenedAlready = YES;
     }
 }
 
