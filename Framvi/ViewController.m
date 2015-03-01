@@ -14,6 +14,7 @@
 @property UIButton *buttonCancelText;
 @property UIButton *buttonRefresh;
 @property UIButton *buttonCancel;
+@property UIImageView *imageRefreshingButton;
 
 @end
 
@@ -38,6 +39,10 @@
     self.webView.scalesPageToFit = YES;
     self.webView.allowsInlineMediaPlayback = YES;
 
+    UIImage *imageRefreshingButton = [UIImage imageNamed:@"refresh-image"];
+    self.imageRefreshingButton = [UIImageView new];
+    self.imageRefreshingButton.image = [imageRefreshingButton imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+
     self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.deviceWidth, 50)];
     self.viewContainerTextField.backgroundColor = [UIColor whiteColor];
     self.textFieldEnterAddress = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.deviceWidth - 20, 30)];
@@ -52,8 +57,7 @@
 
     self.buttonRefresh = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.size.width - 30, 0, 30, 30)];
     [self.buttonRefresh addTarget:self action:@selector(onRefreshButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRefresh setImage:[UIImage imageNamed:@"refresh-image"] forState:UIControlStateNormal];
-    [self.buttonRefresh setTintColor:[UIColor blackColor]];
+    [self.buttonRefresh setImage:self.imageRefreshingButton.image forState:UIControlStateNormal];
 
     [self.textFieldEnterAddress addSubview:self.buttonRefresh];
     [self.viewContainerTextField addSubview:self.buttonCancelText];
