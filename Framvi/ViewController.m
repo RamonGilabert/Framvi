@@ -21,6 +21,9 @@
 @property UIVisualEffectView *blurrViewBar;
 @property UITapGestureRecognizer *tapGestureBlurrEffect;
 @property UITapGestureRecognizer *tapGestureThreeFingers;
+@property UIProgressView *progressBar;
+
+#define FIRST_WEBSITE @"http://ramongilabert.com"
 
 @end
 
@@ -39,7 +42,7 @@
     self.webView.delegate = self;
     [self.view addSubview:self.webView];
 
-    NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://ramongilabert.com"]];
+    NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:FIRST_WEBSITE]];
     [self.webView loadRequest:requestURL];
 
     self.webView.scalesPageToFit = YES;
@@ -58,6 +61,7 @@
     self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, -50, self.deviceWidth, 50)];
     self.viewContainerTextField.backgroundColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:1];
     self.textFieldEnterAddress = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.deviceWidth - 20, 30)];
+    self.textFieldEnterAddress.text = FIRST_WEBSITE;
     self.textFieldEnterAddress.backgroundColor = [UIColor colorWithRed:0.18 green:0.18 blue:0.18 alpha:1];
     self.textFieldEnterAddress.borderStyle = UITextBorderStyleRoundedRect;
     self.textFieldEnterAddress.delegate = self;
@@ -81,7 +85,7 @@
     [self.view addSubview:self.viewContainerTextField];
 
     self.longTouchGestureRecognizer = [UILongPressGestureRecognizer new];
-    self.longTouchGestureRecognizer.minimumPressDuration = 0.4;
+    self.longTouchGestureRecognizer.minimumPressDuration = 0.2;
     [self.longTouchGestureRecognizer addTarget:self action:@selector(longPressGestureRecognizer:)];
     self.longTouchGestureRecognizer.delegate = self;
     [self.webView addGestureRecognizer:self.longTouchGestureRecognizer];
@@ -94,8 +98,15 @@
     self.tapGestureThreeFingers = [UITapGestureRecognizer new];
     self.tapGestureThreeFingers.numberOfTouchesRequired = 3;
     self.tapGestureThreeFingers.numberOfTapsRequired = 1;
+    self.tapGestureThreeFingers.delegate = self;
     [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureRecognizerThreeFingers:)];
     [self.webView addGestureRecognizer:self.tapGestureThreeFingers];
+
+    self.progressBar = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
+    self.progressBar.frame = CGRectMake(0, 0, self.deviceWidth, 10);
+    self.progressBar.progress = 0;
+
+    [self.view addSubview:self.progressBar];
 
     self.yPositionTextField = -50;
 
@@ -154,7 +165,6 @@
         [UIView animateWithDuration:0.3 delay:0 options:0 animations:^{
             self.viewContainerTextField.frame = CGRectMake(0, -50, self.deviceWidth, 50);
             self.webView.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
-            [self.textFieldEnterAddress becomeFirstResponder];
             self.yPositionTextField = -50;
             self.blurrViewBar.alpha = 0;
         } completion:^(BOOL finished) {
@@ -163,7 +173,7 @@
         self.blurrViewBar.alpha = (CGFloat)(50  + self.yPositionTextField) / 50;
         self.viewContainerTextField.frame = CGRectMake(0, self.yPositionTextField, self.deviceWidth, 50);
         self.webView.frame = CGRectMake(0, 50 + self.yPositionTextField, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
-        self.yPositionTextField = self.yPositionTextField + 1.25;
+        self.yPositionTextField = self.yPositionTextField + 1.5;
     }
 
     if (longPressGestureRecognizer.state == UIGestureRecognizerStateEnded) {
@@ -173,8 +183,22 @@
 
 }
 
+#pragma mark - WebView methods
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    self.progressBar.progress = 0;
+    return YES;
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    self.progressBar.progress = 0;
+}
+
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+    self.progressBar.progress = 0;
     [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.style.webkitUserSelect='none';"];
     [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.style.webkitTouchCallout='none';"];
 }
@@ -188,7 +212,7 @@
         self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x - 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
         self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x - 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
     } completion:^(BOOL finished) {
-
+        [self.textFieldEnterAddress setSelected:YES];
     }];
 
     return YES;
