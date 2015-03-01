@@ -19,6 +19,8 @@
 @property int yPositionTextField;
 @property UIVisualEffect *blurrEffect;
 @property UIVisualEffectView *blurrViewBar;
+@property UITapGestureRecognizer *tapGestureBlurrEffect;
+@property UITapGestureRecognizer *tapGestureThreeFingers;
 
 @end
 
@@ -84,6 +86,17 @@
     self.longTouchGestureRecognizer.delegate = self;
     [self.webView addGestureRecognizer:self.longTouchGestureRecognizer];
 
+    self.tapGestureBlurrEffect = [UITapGestureRecognizer new];
+    self.tapGestureBlurrEffect.numberOfTapsRequired = 1;
+    [self.tapGestureBlurrEffect addTarget:self action:@selector(tapGestureBlurrEffect:)];
+    [self.blurrViewBar addGestureRecognizer:self.tapGestureBlurrEffect];
+
+    self.tapGestureThreeFingers = [UITapGestureRecognizer new];
+    self.tapGestureThreeFingers.numberOfTouchesRequired = 3;
+    self.tapGestureThreeFingers.numberOfTapsRequired = 1;
+    [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureRecognizerThreeFingers:)];
+    [self.webView addGestureRecognizer:self.tapGestureThreeFingers];
+
     self.yPositionTextField = -50;
 
     self.valueOfTimer = 1;
@@ -105,6 +118,23 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;
+}
+
+- (void)tapGestureBlurrEffect:(UITapGestureRecognizer *)tapGestureRecognizer
+{
+    [self textFieldDisappear];
+}
+
+- (void)tapGestureRecognizerThreeFingers:(UITapGestureRecognizer *)tapGestureRecognizer
+{
+    [UIView animateWithDuration:0.3 delay:0 options:0 animations:^{
+        self.viewContainerTextField.frame = CGRectMake(0, 0, self.deviceWidth, 50);
+        self.webView.frame = CGRectMake(0, 50, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
+        [self.textFieldEnterAddress becomeFirstResponder];
+        self.yPositionTextField = -50;
+        self.blurrViewBar.alpha = 1;
+    } completion:^(BOOL finished) {
+    }];
 }
 
 - (void)longPressGestureRecognizer:(UILongPressGestureRecognizer *)longPressGestureRecognizer
@@ -131,7 +161,6 @@
         }];
     } else if (self.yPositionTextField < 0) {
         self.blurrViewBar.alpha = (CGFloat)(50  + self.yPositionTextField) / 50;
-        NSLog(@"%f, %f", self.blurrViewBar.alpha, (CGFloat)(50  + self.yPositionTextField) / 50);
         self.viewContainerTextField.frame = CGRectMake(0, self.yPositionTextField, self.deviceWidth, 50);
         self.webView.frame = CGRectMake(0, 50 + self.yPositionTextField, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
         self.yPositionTextField = self.yPositionTextField + 1.25;
@@ -203,20 +232,15 @@
 
 - (void)textFieldDisappear
 {
-    [UIView animateWithDuration:0.2 delay:0 options:0 animations:^{
+    [UIView animateWithDuration:0.4 delay:0 options:0 animations:^{
         self.textFieldEnterAddress.frame = CGRectMake(self.textFieldEnterAddress.frame.origin.x, self.textFieldEnterAddress.frame.origin.y, self.deviceWidth - 20, 30);
         self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x + 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
         self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x + 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
         self.blurrViewBar.alpha = 0;
         [self.textFieldEnterAddress resignFirstResponder];
+        self.viewContainerTextField.frame = CGRectMake(0, -50, self.deviceWidth, 50);
+        self.webView.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.2 delay:0 options:0 animations:^{
-            self.viewContainerTextField.frame = CGRectMake(0, -50, self.deviceWidth, 50);
-            self.webView.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
-
-            [self.textFieldEnterAddress resignFirstResponder];
-        } completion:^(BOOL finished) {
-        }];
     }];
 }
 
