@@ -46,16 +46,18 @@
     self.imageRefreshingButton.image = [imageRefreshingButton imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
     self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, -50, self.deviceWidth, 50)];
-    self.viewContainerTextField.backgroundColor = [UIColor whiteColor];
+    self.viewContainerTextField.backgroundColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:1];
     self.textFieldEnterAddress = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.deviceWidth - 20, 30)];
-    self.textFieldEnterAddress.backgroundColor = [UIColor colorWithRed:0.85 green:0.85 blue:0.85 alpha:1];
+    self.textFieldEnterAddress.backgroundColor = [UIColor colorWithRed:0.18 green:0.18 blue:0.18 alpha:1];
     self.textFieldEnterAddress.borderStyle = UITextBorderStyleRoundedRect;
     self.textFieldEnterAddress.delegate = self;
+    self.textFieldEnterAddress.keyboardAppearance = UIKeyboardAppearanceDark;
+    self.textFieldEnterAddress.tintColor = [UIColor whiteColor];
 
     self.buttonCancelText = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.origin.x + self.textFieldEnterAddress.frame.size.width, 10, 100, self.textFieldEnterAddress.frame.size.height)];
     [self.buttonCancelText addTarget:self action:@selector(onCancelTextButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonCancelText setTitle:@"Cancel" forState:UIControlStateNormal];
-    [self.buttonCancelText setTitleColor:[UIColor colorWithRed:0.04 green:0.42 blue:0.94 alpha:1] forState:UIControlStateNormal];
+    [self.buttonCancelText setTitleColor:[UIColor colorWithRed:0.18 green:0.18 blue:0.18 alpha:1] forState:UIControlStateNormal];
 
     self.buttonRefresh = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.size.width - 30, 0, 30, 30)];
     [self.buttonRefresh addTarget:self action:@selector(onRefreshButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
