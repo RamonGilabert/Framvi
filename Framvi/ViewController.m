@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  Framvi
-//
-//  Created by Ramon Gilabert Llop on 2/23/15.
-//  Copyright (c) 2015 Ramon Gilabert. All rights reserved.
-//
-
 #import "ViewController.h"
 
 @interface ViewController () <UIWebViewDelegate, UITextFieldDelegate>
@@ -46,7 +38,7 @@
     self.webView.scalesPageToFit = YES;
     self.webView.allowsInlineMediaPlayback = YES;
 
-    self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, -50, self.deviceWidth, 50)];
+    self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.deviceWidth, 50)];
     self.viewContainerTextField.backgroundColor = [UIColor whiteColor];
     self.textFieldEnterAddress = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.deviceWidth - 20, 30)];
     self.textFieldEnterAddress.backgroundColor = [UIColor colorWithRed:0.85 green:0.85 blue:0.85 alpha:1];
@@ -54,9 +46,16 @@
     self.textFieldEnterAddress.delegate = self;
 
     self.buttonCancelText = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.origin.x + self.textFieldEnterAddress.frame.size.width, 10, 100, self.textFieldEnterAddress.frame.size.height)];
+    [self.buttonCancelText addTarget:self action:@selector(onCancelTextButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonCancelText setTitle:@"Cancel" forState:UIControlStateNormal];
     [self.buttonCancelText setTitleColor:[UIColor colorWithRed:0.04 green:0.42 blue:0.94 alpha:1] forState:UIControlStateNormal];
 
+    self.buttonRefresh = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.size.width - 30, 0, 30, 30)];
+    [self.buttonRefresh addTarget:self action:@selector(onRefreshButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonRefresh setImage:[UIImage imageNamed:@"refresh-image"] forState:UIControlStateNormal];
+    [self.buttonRefresh setTintColor:[UIColor blackColor]];
+
+    [self.textFieldEnterAddress addSubview:self.buttonRefresh];
     [self.viewContainerTextField addSubview:self.buttonCancelText];
     [self.viewContainerTextField addSubview:self.textFieldEnterAddress];
     [self.view addSubview:self.viewContainerTextField];
@@ -81,10 +80,12 @@
 {
     [UIView animateWithDuration:0.4 delay:0 options:0 animations:^{
         self.textFieldEnterAddress.frame = CGRectMake(self.textFieldEnterAddress.frame.origin.x, self.textFieldEnterAddress.frame.origin.y, self.deviceWidth - 85, 30);
+        self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x - 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
         self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x - 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
     } completion:^(BOOL finished) {
 
     }];
+
     return YES;
 }
 
@@ -92,7 +93,14 @@
 
 - (IBAction)onCancelTextButtonPressed:(UIButton *)sender
 {
+    [UIView animateWithDuration:0.4 delay:0 options:0 animations:^{
+        self.textFieldEnterAddress.frame = CGRectMake(self.textFieldEnterAddress.frame.origin.x, self.textFieldEnterAddress.frame.origin.y, self.deviceWidth - 20, 30);
+        self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x + 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
+        self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x + 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
 
+        [self.textFieldEnterAddress resignFirstResponder];
+    } completion:^(BOOL finished) {
+    }];
 }
 
 - (IBAction)onRefreshButtonPressed:(UIButton *)sender
