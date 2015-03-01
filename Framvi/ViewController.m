@@ -100,17 +100,26 @@
 {
     self.webView.userInteractionEnabled = NO;
 
-    if (self.yPositionTextField < 0) {
-        self.viewContainerTextField.frame = CGRectMake(0, self.yPositionTextField, self.deviceWidth, 50);
-        self.webView.frame = CGRectMake(0, 50 + self.yPositionTextField, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
-        self.yPositionTextField = self.yPositionTextField + 1.25;
-    } else if (self.yPositionTextField > -20) {
+    if (self.yPositionTextField > -25 && longPressGestureRecognizer.state == UIGestureRecognizerStateEnded) {
         [UIView animateWithDuration:0.3 delay:0 options:0 animations:^{
             self.viewContainerTextField.frame = CGRectMake(0, 0, self.deviceWidth, 50);
             self.webView.frame = CGRectMake(0, 50, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
             [self.textFieldEnterAddress becomeFirstResponder];
+            self.yPositionTextField = -50;
         } completion:^(BOOL finished) {
         }];
+    } else if (longPressGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        [UIView animateWithDuration:0.3 delay:0 options:0 animations:^{
+            self.viewContainerTextField.frame = CGRectMake(0, -50, self.deviceWidth, 50);
+            self.webView.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
+            [self.textFieldEnterAddress becomeFirstResponder];
+            self.yPositionTextField = -50;
+        } completion:^(BOOL finished) {
+        }];
+    } else if (self.yPositionTextField < 0) {
+        self.viewContainerTextField.frame = CGRectMake(0, self.yPositionTextField, self.deviceWidth, 50);
+        self.webView.frame = CGRectMake(0, 50 + self.yPositionTextField, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
+        self.yPositionTextField = self.yPositionTextField + 1.25;
     }
 
     if (longPressGestureRecognizer.state == UIGestureRecognizerStateEnded) {
