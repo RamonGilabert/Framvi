@@ -17,6 +17,8 @@
 @property UIImageView *imageRefreshingButton;
 @property UILongPressGestureRecognizer *longTouchGestureRecognizer;
 @property int yPositionTextField;
+@property UIVisualEffect *blurrEffect;
+@property UIVisualEffectView *blurrViewBar;
 
 @end
 
@@ -45,6 +47,12 @@
     self.imageRefreshingButton = [UIImageView new];
     self.imageRefreshingButton.image = [imageRefreshingButton imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
+    self.blurrEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    self.blurrViewBar = [[UIVisualEffectView alloc] initWithEffect:self.blurrEffect];
+    self.blurrViewBar.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight);
+    self.blurrViewBar.alpha = 0;
+    [self.view addSubview:self.blurrViewBar];
+
     self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, -50, self.deviceWidth, 50)];
     self.viewContainerTextField.backgroundColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:1];
     self.textFieldEnterAddress = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.deviceWidth - 20, 30)];
@@ -53,6 +61,7 @@
     self.textFieldEnterAddress.delegate = self;
     self.textFieldEnterAddress.keyboardAppearance = UIKeyboardAppearanceDark;
     self.textFieldEnterAddress.tintColor = [UIColor whiteColor];
+    self.textFieldEnterAddress.textColor = [UIColor whiteColor];
 
     self.buttonCancelText = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.origin.x + self.textFieldEnterAddress.frame.size.width, 10, 100, self.textFieldEnterAddress.frame.size.height)];
     [self.buttonCancelText addTarget:self action:@selector(onCancelTextButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -108,6 +117,7 @@
             self.webView.frame = CGRectMake(0, 50, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
             [self.textFieldEnterAddress becomeFirstResponder];
             self.yPositionTextField = -50;
+            self.blurrViewBar.alpha = 1;
         } completion:^(BOOL finished) {
         }];
     } else if (longPressGestureRecognizer.state == UIGestureRecognizerStateEnded) {
@@ -116,9 +126,12 @@
             self.webView.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
             [self.textFieldEnterAddress becomeFirstResponder];
             self.yPositionTextField = -50;
+            self.blurrViewBar.alpha = 0;
         } completion:^(BOOL finished) {
         }];
     } else if (self.yPositionTextField < 0) {
+        self.blurrViewBar.alpha = (CGFloat)(50  + self.yPositionTextField) / 50;
+        NSLog(@"%f, %f", self.blurrViewBar.alpha, (CGFloat)(50  + self.yPositionTextField) / 50);
         self.viewContainerTextField.frame = CGRectMake(0, self.yPositionTextField, self.deviceWidth, 50);
         self.webView.frame = CGRectMake(0, 50 + self.yPositionTextField, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
         self.yPositionTextField = self.yPositionTextField + 1.25;
@@ -152,15 +165,49 @@
     return YES;
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if ([self.textFieldEnterAddress.text rangeOfString:@"http://"].location == NSNotFound && [self.textFieldEnterAddress.text rangeOfString:@"https://"].location != NSNotFound) {
+        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:self.textFieldEnterAddress.text]];
+        [self.webView loadRequest:requestURL];
+    } else if ([self.textFieldEnterAddress.text rangeOfString:@"http://"].location != NSNotFound && [self.textFieldEnterAddress.text rangeOfString:@"https://"].location == NSNotFound) {
+        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:self.textFieldEnterAddress.text]];
+        [self.webView loadRequest:requestURL];
+    } else if ([self.textFieldEnterAddress.text rangeOfString:@"http://"].location == NSNotFound) {
+        NSString *stringToLookFor = [NSString stringWithFormat:@"http://%@", self.textFieldEnterAddress.text];
+        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:stringToLookFor]];
+        [self.webView loadRequest:requestURL];
+    } else {
+        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:self.textFieldEnterAddress.text]];
+        [self.webView loadRequest:requestURL];
+    }
+
+    [self textFieldDisappear];
+
+    return YES;
+}
+
 #pragma mark - IBActions
 
 - (IBAction)onCancelTextButtonPressed:(UIButton *)sender
+{
+    [self textFieldDisappear];
+}
+
+- (IBAction)onRefreshButtonPressed:(UIButton *)sender
+{
+
+}
+
+#pragma mark - Helper methods
+
+- (void)textFieldDisappear
 {
     [UIView animateWithDuration:0.2 delay:0 options:0 animations:^{
         self.textFieldEnterAddress.frame = CGRectMake(self.textFieldEnterAddress.frame.origin.x, self.textFieldEnterAddress.frame.origin.y, self.deviceWidth - 20, 30);
         self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x + 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
         self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x + 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
-
+        self.blurrViewBar.alpha = 0;
         [self.textFieldEnterAddress resignFirstResponder];
     } completion:^(BOOL finished) {
         [UIView animateWithDuration:0.2 delay:0 options:0 animations:^{
@@ -172,13 +219,6 @@
         }];
     }];
 }
-
-- (IBAction)onRefreshButtonPressed:(UIButton *)sender
-{
-
-}
-
-#pragma mark - Helper methods
 
 - (void)checkFramer:(NSTimer *)timer
 {
