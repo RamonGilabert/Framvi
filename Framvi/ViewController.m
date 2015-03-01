@@ -85,7 +85,7 @@
     [self.view addSubview:self.viewContainerTextField];
 
     self.longTouchGestureRecognizer = [UILongPressGestureRecognizer new];
-    self.longTouchGestureRecognizer.minimumPressDuration = 0.2;
+    self.longTouchGestureRecognizer.minimumPressDuration = 0.1;
     [self.longTouchGestureRecognizer addTarget:self action:@selector(longPressGestureRecognizer:)];
     self.longTouchGestureRecognizer.delegate = self;
     [self.webView addGestureRecognizer:self.longTouchGestureRecognizer];
