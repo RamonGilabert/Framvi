@@ -1,6 +1,6 @@
 #import "ViewController.h"
 
-@interface ViewController () <UIWebViewDelegate, UITextFieldDelegate>
+@interface ViewController () <UIWebViewDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 
 @property CGFloat deviceWidth;
 @property CGFloat deviceHeight;
@@ -15,6 +15,8 @@
 @property UIButton *buttonRefresh;
 @property UIButton *buttonCancel;
 @property UIImageView *imageRefreshingButton;
+@property UILongPressGestureRecognizer *longTouchGestureRecognizer;
+@property int yPositionTextField;
 
 @end
 
@@ -43,7 +45,7 @@
     self.imageRefreshingButton = [UIImageView new];
     self.imageRefreshingButton.image = [imageRefreshingButton imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
-    self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.deviceWidth, 50)];
+    self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, -50, self.deviceWidth, 50)];
     self.viewContainerTextField.backgroundColor = [UIColor whiteColor];
     self.textFieldEnterAddress = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.deviceWidth - 20, 30)];
     self.textFieldEnterAddress.backgroundColor = [UIColor colorWithRed:0.85 green:0.85 blue:0.85 alpha:1];
@@ -58,11 +60,20 @@
     self.buttonRefresh = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.size.width - 30, 0, 30, 30)];
     [self.buttonRefresh addTarget:self action:@selector(onRefreshButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonRefresh setImage:self.imageRefreshingButton.image forState:UIControlStateNormal];
+    self.buttonRefresh.tintColor = [UIColor colorWithRed:0.31 green:0.31 blue:0.32 alpha:1];
 
     [self.textFieldEnterAddress addSubview:self.buttonRefresh];
     [self.viewContainerTextField addSubview:self.buttonCancelText];
     [self.viewContainerTextField addSubview:self.textFieldEnterAddress];
     [self.view addSubview:self.viewContainerTextField];
+
+    self.longTouchGestureRecognizer = [UILongPressGestureRecognizer new];
+    self.longTouchGestureRecognizer.minimumPressDuration = 0.4;
+    [self.longTouchGestureRecognizer addTarget:self action:@selector(longPressGestureRecognizer:)];
+    self.longTouchGestureRecognizer.delegate = self;
+    [self.webView addGestureRecognizer:self.longTouchGestureRecognizer];
+
+    self.yPositionTextField = -50;
 
     self.valueOfTimer = 1;
 }
@@ -76,6 +87,43 @@
     self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
 
     self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
+}
+
+#pragma mark - Gesture recognizers
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
+}
+
+- (void)longPressGestureRecognizer:(UILongPressGestureRecognizer *)longPressGestureRecognizer
+{
+    self.webView.userInteractionEnabled = NO;
+
+    if (self.yPositionTextField < 0) {
+        self.viewContainerTextField.frame = CGRectMake(0, self.yPositionTextField, self.deviceWidth, 50);
+        self.webView.frame = CGRectMake(0, 50 + self.yPositionTextField, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
+        self.yPositionTextField = self.yPositionTextField + 1.25;
+    } else if (self.yPositionTextField > -20) {
+        [UIView animateWithDuration:0.3 delay:0 options:0 animations:^{
+            self.viewContainerTextField.frame = CGRectMake(0, 0, self.deviceWidth, 50);
+            self.webView.frame = CGRectMake(0, 50, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
+            [self.textFieldEnterAddress becomeFirstResponder];
+        } completion:^(BOOL finished) {
+        }];
+    }
+
+    if (longPressGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        self.webView.userInteractionEnabled = YES;
+        [self.longTouchGestureRecognizer addTarget:self action:@selector(longPressGestureRecognizer:)];
+    }
+
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.style.webkitUserSelect='none';"];
+    [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.style.webkitTouchCallout='none';"];
 }
 
 #pragma mark - UITextField delegate methods
@@ -97,22 +145,24 @@
 
 - (IBAction)onCancelTextButtonPressed:(UIButton *)sender
 {
-    [UIView animateWithDuration:0.4 delay:0 options:0 animations:^{
+    [UIView animateWithDuration:0.2 delay:0 options:0 animations:^{
         self.textFieldEnterAddress.frame = CGRectMake(self.textFieldEnterAddress.frame.origin.x, self.textFieldEnterAddress.frame.origin.y, self.deviceWidth - 20, 30);
         self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x + 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
         self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x + 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
 
         [self.textFieldEnterAddress resignFirstResponder];
     } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.2 delay:0 options:0 animations:^{
+            self.viewContainerTextField.frame = CGRectMake(0, -50, self.deviceWidth, 50);
+            self.webView.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
+
+            [self.textFieldEnterAddress resignFirstResponder];
+        } completion:^(BOOL finished) {
+        }];
     }];
 }
 
 - (IBAction)onRefreshButtonPressed:(UIButton *)sender
-{
-
-}
-
-- (IBAction)onCancelButtonPressed:(UIButton *)sender
 {
 
 }
