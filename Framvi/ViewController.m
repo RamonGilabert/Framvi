@@ -308,18 +308,20 @@
     BOOL isAValidURL = [self isValidURL:[NSURL URLWithString:@"http://192.168.1.130:8000"]];
 
     if (!self.isFramerOpenedAlready && isAValidURL && timer) {
-        self.valueOfTimer = 100;
+        [self.timerSelector invalidate];
         UIAlertAction *alertActionOpen = [UIAlertAction actionWithTitle:@"Open" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.130:8000/"]];
             [self.webView loadRequest:requestURL];
             [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
             self.valueOfTimer = 10;
             self.isFramerOpenedAlready = YES;
+            self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
         }];
         UIAlertAction *alertActionClose = [UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
             [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
             self.valueOfTimer = 1;
             self.isFramerOpenedAlready = NO;
+            self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
         }];
 
         [self.alertControllerOpenFramer addAction:alertActionOpen];
@@ -328,11 +330,16 @@
         if (![self.alertControllerOpenFramer isFirstResponder]) {
             [self presentViewController:self.alertControllerOpenFramer animated:YES completion:nil];
         }
+
+        [self.textFieldEnterAddress resignFirstResponder];
+        [self textFieldDisappear];
     } else if (!self.isFramerOpenedAlready && isAValidURL && !timer) {
         NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.130:8000/"]];
         [self.webView loadRequest:requestURL];
         self.valueOfTimer = 10;
         self.isFramerOpenedAlready = YES;
+        [self.textFieldEnterAddress resignFirstResponder];
+        [self textFieldDisappear];
     }
 }
 
