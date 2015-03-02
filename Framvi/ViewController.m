@@ -22,6 +22,7 @@
 @property UITapGestureRecognizer *tapGestureBlurrEffect;
 @property UITapGestureRecognizer *tapGestureThreeFingers;
 @property UIProgressView *progressBar;
+@property BOOL controllerOneTime;
 
 #define FIRST_WEBSITE @"http://ramongilabert.com"
 
@@ -48,38 +49,39 @@
     self.webView.scalesPageToFit = YES;
     self.webView.allowsInlineMediaPlayback = YES;
 
-    UIImage *imageRefreshingButton = [UIImage imageNamed:@"refresh-image"];
+    UIImage *imageRefreshingButton = [UIImage imageNamed:@"cross-image"];
     self.imageRefreshingButton = [UIImageView new];
     self.imageRefreshingButton.image = [imageRefreshingButton imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
     self.blurrEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     self.blurrViewBar = [[UIVisualEffectView alloc] initWithEffect:self.blurrEffect];
     self.blurrViewBar.frame = CGRectMake(0, 0, self.deviceWidth, self.deviceHeight);
-    self.blurrViewBar.alpha = 0;
+    self.blurrViewBar.alpha = 1;
     [self.view addSubview:self.blurrViewBar];
 
-    self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, -50, self.deviceWidth, 50)];
+    self.viewContainerTextField = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.deviceWidth, 50)];
     self.viewContainerTextField.backgroundColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:1];
     self.textFieldEnterAddress = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.deviceWidth - 20, 30)];
-    self.textFieldEnterAddress.text = FIRST_WEBSITE;
     self.textFieldEnterAddress.backgroundColor = [UIColor colorWithRed:0.18 green:0.18 blue:0.18 alpha:1];
     self.textFieldEnterAddress.borderStyle = UITextBorderStyleRoundedRect;
     self.textFieldEnterAddress.delegate = self;
     self.textFieldEnterAddress.keyboardAppearance = UIKeyboardAppearanceDark;
     self.textFieldEnterAddress.tintColor = [UIColor whiteColor];
     self.textFieldEnterAddress.textColor = [UIColor whiteColor];
+    self.textFieldEnterAddress.keyboardType = UIKeyboardTypeURL;
+    [self.textFieldEnterAddress addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     self.buttonCancelText = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.origin.x + self.textFieldEnterAddress.frame.size.width, 10, 100, self.textFieldEnterAddress.frame.size.height)];
     [self.buttonCancelText addTarget:self action:@selector(onCancelTextButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonCancelText setTitle:@"Cancel" forState:UIControlStateNormal];
     [self.buttonCancelText setTitleColor:[UIColor colorWithRed:0.18 green:0.18 blue:0.18 alpha:1] forState:UIControlStateNormal];
 
-    self.buttonRefresh = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.size.width - 30, 0, 30, 30)];
-    [self.buttonRefresh addTarget:self action:@selector(onRefreshButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    self.buttonRefresh = [self.textFieldEnterAddress valueForKey:@"_clearButton"];
     [self.buttonRefresh setImage:self.imageRefreshingButton.image forState:UIControlStateNormal];
+    [self.buttonRefresh setImage:self.imageRefreshingButton.image forState:UIControlStateHighlighted];
     self.buttonRefresh.tintColor = [UIColor colorWithRed:0.31 green:0.31 blue:0.32 alpha:1];
 
-    [self.textFieldEnterAddress addSubview:self.buttonRefresh];
+    self.textFieldEnterAddress.clearButtonMode = UITextFieldViewModeAlways;
     [self.viewContainerTextField addSubview:self.buttonCancelText];
     [self.viewContainerTextField addSubview:self.textFieldEnterAddress];
     [self.view addSubview:self.viewContainerTextField];
@@ -109,6 +111,7 @@
     [self.view addSubview:self.progressBar];
 
     self.yPositionTextField = -50;
+    self.controllerOneTime = NO;
 
     self.valueOfTimer = 1;
 }
@@ -118,6 +121,8 @@
     [super viewDidAppear:animated];
 
     [self checkFramer:0];
+
+    [self.textFieldEnterAddress becomeFirstResponder];
 
     self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
 
@@ -152,7 +157,8 @@
 {
     self.webView.userInteractionEnabled = NO;
 
-    if (self.yPositionTextField > -25 && longPressGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+    if (self.yPositionTextField > -25 && longPressGestureRecognizer.state == UIGestureRecognizerStateEnded && !self.controllerOneTime) {
+        self.controllerOneTime = YES;
         [UIView animateWithDuration:0.3 delay:0 options:0 animations:^{
             self.viewContainerTextField.frame = CGRectMake(0, 0, self.deviceWidth, 50);
             self.webView.frame = CGRectMake(0, 50, self.deviceWidth, self.deviceHeight + (50 - self.yPositionTextField));
@@ -207,15 +213,23 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    [UIView animateWithDuration:0.4 delay:0 options:0 animations:^{
-        self.textFieldEnterAddress.frame = CGRectMake(self.textFieldEnterAddress.frame.origin.x, self.textFieldEnterAddress.frame.origin.y, self.deviceWidth - 85, 30);
-        self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x - 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
-        self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x - 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
-    } completion:^(BOOL finished) {
-        [self.textFieldEnterAddress setSelected:YES];
-    }];
+    if (self.textFieldEnterAddress.frame.size.width != self.deviceWidth - 85) {
+        [UIView animateWithDuration:0.4 delay:0 options:0 animations:^{
+            self.textFieldEnterAddress.frame = CGRectMake(self.textFieldEnterAddress.frame.origin.x, self.textFieldEnterAddress.frame.origin.y, self.deviceWidth - 85, 30);
+            self.buttonRefresh.frame = CGRectMake(self.buttonRefresh.frame.origin.x - 65, self.buttonRefresh.frame.origin.y, self.buttonRefresh.frame.size.width, self.buttonRefresh.frame.size.height);
+            self.buttonCancelText.frame = CGRectMake(self.buttonCancelText.frame.origin.x - 77.5, self.buttonCancelText.frame.origin.y, self.buttonCancelText.frame.size.width, self.buttonCancelText.frame.size.height);
+            [self.textFieldEnterAddress setSelected:YES];
+        } completion:^(BOOL finished) {
+            self.controllerOneTime = NO;
+        }];
+    }
 
     return YES;
+}
+
+- (void)textFieldDidChange:(UITextField *)textField
+{
+
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -245,11 +259,6 @@
 - (IBAction)onCancelTextButtonPressed:(UIButton *)sender
 {
     [self textFieldDisappear];
-}
-
-- (IBAction)onRefreshButtonPressed:(UIButton *)sender
-{
-
 }
 
 #pragma mark - Helper methods
