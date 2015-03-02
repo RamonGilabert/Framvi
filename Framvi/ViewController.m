@@ -108,6 +108,7 @@
     self.progressBar = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
     self.progressBar.frame = CGRectMake(0, 0, self.deviceWidth, 10);
     self.progressBar.progress = 0;
+    self.progressBar.progressTintColor = [UIColor colorWithRed:0.69 green:0.25 blue:0.38 alpha:1];
 
     [self.view addSubview:self.progressBar];
 
