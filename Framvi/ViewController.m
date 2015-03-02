@@ -28,6 +28,8 @@
 @property NSMutableArray *arrayOfWebsitesVisited;
 @property NSMutableArray *arrayOfSnapshots;
 @property int websitesVisited;
+@property UITapGestureRecognizer *tapGestureGoBack;
+@property UITapGestureRecognizer *tapGestureGoForward;
 
 #define FIRST_WEBSITE @"http://ramongilabert.com"
 
@@ -122,6 +124,16 @@
     self.arrayOfSnapshots = [NSMutableArray new];
     self.websitesVisited = 0;
 
+    self.tapGestureGoBack = [UITapGestureRecognizer new];
+    self.tapGestureGoBack.numberOfTapsRequired = 1;
+    self.tapGestureGoBack.delegate = self;
+    [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoBack:)];
+
+    self.tapGestureGoForward = [UITapGestureRecognizer new];
+    self.tapGestureGoForward.numberOfTapsRequired = 1;
+    self.tapGestureGoForward.delegate = self;
+    [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoForward:)];
+
     self.valueOfTimer = 1;
 }
 
@@ -208,7 +220,7 @@
 - (void)tapGestureGoForward:(UITapGestureRecognizer *)tapGestureRecognizer
 {
     if ([self.webView canGoForward]) {
-        
+
     }
 }
 
