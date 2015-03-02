@@ -23,6 +23,8 @@
 @property UITapGestureRecognizer *tapGestureThreeFingers;
 @property UIProgressView *progressBar;
 @property BOOL controllerOneTime;
+@property NSTimer *timerProgressBar;
+@property BOOL valueProgressBar;
 
 #define FIRST_WEBSITE @"http://ramongilabert.com"
 
@@ -69,7 +71,6 @@
     self.textFieldEnterAddress.tintColor = [UIColor whiteColor];
     self.textFieldEnterAddress.textColor = [UIColor whiteColor];
     self.textFieldEnterAddress.keyboardType = UIKeyboardTypeURL;
-    [self.textFieldEnterAddress addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     self.buttonCancelText = [[UIButton alloc] initWithFrame:CGRectMake(self.textFieldEnterAddress.frame.origin.x + self.textFieldEnterAddress.frame.size.width, 10, 100, self.textFieldEnterAddress.frame.size.height)];
     [self.buttonCancelText addTarget:self action:@selector(onCancelTextButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -193,20 +194,49 @@
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    self.progressBar.progress = 0;
     return YES;
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    self.progressBar.progress = 0;
+    self.progressBar.hidden = NO;
+    self.valueProgressBar = NO;
+    self.timerProgressBar = [NSTimer scheduledTimerWithTimeInterval:0.01667 target:self selector:@selector(timerWebViewProgress) userInfo:nil repeats:YES];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
     self.progressBar.progress = 0;
+    self.progressBar.hidden = NO;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    self.progressBar.progress = 0;
+    self.valueProgressBar = YES;
     [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.style.webkitUserSelect='none';"];
     [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.style.webkitTouchCallout='none';"];
+}
+
+#pragma mark - UIWebViewProgress
+
+- (void)timerWebViewProgress
+{
+    if (self.valueProgressBar) {
+        if (self.progressBar.progress >= 1) {
+            self.progressBar.hidden = YES;
+            [self.timerProgressBar invalidate];
+        }
+        else {
+            self.progressBar.progress = self.progressBar.progress + 0.01;
+        }
+    }
+    else {
+        self.progressBar.progress = self.progressBar.progress + 0.005;
+        if (self.progressBar.progress >= 0.95) {
+            self.progressBar.progress = 0.95;
+        }
+    }
 }
 
 #pragma mark - UITextField delegate methods
@@ -225,11 +255,6 @@
     }
 
     return YES;
-}
-
-- (void)textFieldDidChange:(UITextField *)textField
-{
-
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
