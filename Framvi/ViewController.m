@@ -25,6 +25,9 @@
 @property BOOL controllerOneTime;
 @property NSTimer *timerProgressBar;
 @property BOOL valueProgressBar;
+@property NSMutableArray *arrayOfWebsitesVisited;
+@property NSMutableArray *arrayOfSnapshots;
+@property int websitesVisited;
 
 #define FIRST_WEBSITE @"http://ramongilabert.com"
 
@@ -115,6 +118,10 @@
     self.yPositionTextField = -50;
     self.controllerOneTime = NO;
 
+    self.arrayOfWebsitesVisited = [NSMutableArray new];
+    self.arrayOfSnapshots = [NSMutableArray new];
+    self.websitesVisited = 0;
+
     self.valueOfTimer = 1;
 }
 
@@ -189,6 +196,20 @@
         [self.longTouchGestureRecognizer addTarget:self action:@selector(longPressGestureRecognizer:)];
     }
 
+}
+
+- (void)tapGestureGoBack:(UITapGestureRecognizer *)tapGestureRecognizer
+{
+    if ([self.webView canGoBack]) {
+
+    }
+}
+
+- (void)tapGestureGoForward:(UITapGestureRecognizer *)tapGestureRecognizer
+{
+    if ([self.webView canGoForward]) {
+        
+    }
 }
 
 #pragma mark - WebView methods
