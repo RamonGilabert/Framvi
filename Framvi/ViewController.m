@@ -128,11 +128,13 @@
     self.tapGestureGoBack.numberOfTapsRequired = 1;
     self.tapGestureGoBack.delegate = self;
     [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoBack:)];
+    [self.webView addGestureRecognizer:self.tapGestureGoBack];
 
     self.tapGestureGoForward = [UITapGestureRecognizer new];
     self.tapGestureGoForward.numberOfTapsRequired = 1;
     self.tapGestureGoForward.delegate = self;
     [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoForward:)];
+    [self.webView addGestureRecognizer:self.tapGestureGoForward];
 
     self.valueOfTimer = 1;
 }
@@ -212,14 +214,18 @@
 
 - (void)tapGestureGoBack:(UITapGestureRecognizer *)tapGestureRecognizer
 {
-    if ([self.webView canGoBack]) {
+    CGPoint location = [tapGestureRecognizer locationInView:self.webView];
+
+    if ([self.webView canGoBack] && location.x < 20) {
 
     }
 }
 
 - (void)tapGestureGoForward:(UITapGestureRecognizer *)tapGestureRecognizer
 {
-    if ([self.webView canGoForward]) {
+    CGPoint location = [tapGestureRecognizer locationInView:self.webView];
+
+    if ([self.webView canGoForward] && location.x > self.deviceWidth - 20) {
 
     }
 }
