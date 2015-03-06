@@ -1,6 +1,4 @@
 #import "ViewController.h"
-#include <ifaddrs.h>
-#include <arpa/inet.h>
 
 @interface ViewController () <UIWebViewDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 
