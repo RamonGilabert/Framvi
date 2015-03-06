@@ -15,6 +15,9 @@
 		F63E43291A9BB8E000343A10 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63E43281A9BB8E000343A10 /* Images.xcassets */; };
 		F63E432C1A9BB8E000343A10 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F63E432A1A9BB8E000343A10 /* LaunchScreen.xib */; };
 		F63E43381A9BB8E000343A10 /* FramviTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F63E43371A9BB8E000343A10 /* FramviTests.m */; };
+		F69B43F61AAA3CD700D8B9CF /* FirstTimeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F69B43F51AAA3CD700D8B9CF /* FirstTimeViewController.m */; };
+		F69B43F91AAA415200D8B9CF /* PagingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F69B43F81AAA415200D8B9CF /* PagingViewController.m */; };
+		F69B43FD1AAA430C00D8B9CF /* PagingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F69B43FC1AAA430C00D8B9CF /* PagingView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +45,11 @@
 		F63E43311A9BB8E000343A10 /* FramviTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FramviTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63E43361A9BB8E000343A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F63E43371A9BB8E000343A10 /* FramviTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FramviTests.m; sourceTree = "<group>"; };
+		F69B43F41AAA3CD700D8B9CF /* FirstTimeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstTimeViewController.h; sourceTree = "<group>"; };
+		F69B43F51AAA3CD700D8B9CF /* FirstTimeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FirstTimeViewController.m; sourceTree = "<group>"; };
+		F69B43F71AAA415200D8B9CF /* PagingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PagingViewController.h; sourceTree = "<group>"; };
+		F69B43F81AAA415200D8B9CF /* PagingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PagingViewController.m; sourceTree = "<group>"; };
+		F69B43FC1AAA430C00D8B9CF /* PagingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PagingView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +95,12 @@
 				F63E431D1A9BB8E000343A10 /* AppDelegate.m */,
 				F63E43221A9BB8E000343A10 /* ViewController.h */,
 				F63E43231A9BB8E000343A10 /* ViewController.m */,
+				F69B43F41AAA3CD700D8B9CF /* FirstTimeViewController.h */,
+				F69B43F51AAA3CD700D8B9CF /* FirstTimeViewController.m */,
+				F69B43F71AAA415200D8B9CF /* PagingViewController.h */,
+				F69B43F81AAA415200D8B9CF /* PagingViewController.m */,
 				F63E43251A9BB8E000343A10 /* Main.storyboard */,
+				F69B43FC1AAA430C00D8B9CF /* PagingView.xib */,
 				F63E43281A9BB8E000343A10 /* Images.xcassets */,
 				F63E432A1A9BB8E000343A10 /* LaunchScreen.xib */,
 				F63E431F1A9BB8E000343A10 /* Framvi.xcdatamodeld */,
@@ -202,6 +215,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F69B43FD1AAA430C00D8B9CF /* PagingView.xib in Resources */,
 				F63E43271A9BB8E000343A10 /* Main.storyboard in Resources */,
 				F63E432C1A9BB8E000343A10 /* LaunchScreen.xib in Resources */,
 				F63E43291A9BB8E000343A10 /* Images.xcassets in Resources */,
@@ -222,10 +236,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F69B43F91AAA415200D8B9CF /* PagingViewController.m in Sources */,
 				F63E431E1A9BB8E000343A10 /* AppDelegate.m in Sources */,
 				F63E431B1A9BB8E000343A10 /* main.m in Sources */,
 				F63E43241A9BB8E000343A10 /* ViewController.m in Sources */,
 				F63E43211A9BB8E000343A10 /* Framvi.xcdatamodeld in Sources */,
+				F69B43F61AAA3CD700D8B9CF /* FirstTimeViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

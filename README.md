@@ -20,6 +20,8 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 1. Multiple gestures as swipes, long taps, simple taps.
 2. Fullscreen viewer.
 3. Smart type.
+4. Local string host ip address.
+5. First time in app onboarding.
 
 ## Contribute
 

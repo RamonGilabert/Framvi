@@ -143,6 +143,14 @@
 {
     [super viewDidAppear:animated];
 
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasLaunchedOnce"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasLaunchedOnce"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self performSegueWithIdentifier:@"goFirstTimeInApp" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"goFirstTimeInApp" sender:self];
+    }
+
     NSString *stringOfLocalHost = [self getIPAddress];
     self.stringFramerURL = [[@"http://" stringByAppendingString:stringOfLocalHost] stringByAppendingString:@":8000/"];
 
