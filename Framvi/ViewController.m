@@ -1,4 +1,6 @@
 #import "ViewController.h"
+#include <ifaddrs.h>
+#include <arpa/inet.h>
 
 @interface ViewController () <UIWebViewDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 
@@ -30,6 +32,7 @@
 @property int websitesVisited;
 @property UISwipeGestureRecognizer *tapGestureGoBack;
 @property UISwipeGestureRecognizer *tapGestureGoForward;
+@property NSString *stringFramerURL;
 
 #define FIRST_WEBSITE @"http://ramongilabert.com"
 
@@ -141,6 +144,9 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
+    NSString *stringOfLocalHost = [self getIPAddress];
+    self.stringFramerURL = [[@"http://" stringByAppendingString:stringOfLocalHost] stringByAppendingString:@":8000/"];
 
     [self checkFramer:0];
 
@@ -298,7 +304,7 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if ([textField.text isEqualToString:@"Framer"] || [textField.text isEqualToString:@"framer"] || [textField.text isEqualToString:@"Test prototype"]) {
-        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.132:8000/"]];
+        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:self.stringFramerURL]];
         [self.webView loadRequest:requestURL];
         self.isFramerOpenedAlready = YES;
         [self.textFieldEnterAddress resignFirstResponder];
@@ -349,7 +355,7 @@
 
 - (void)checkFramer:(NSTimer *)timer
 {
-    NSURL *usedURL = [NSURL URLWithString:@"http://192.168.1.132:8000/"];
+    NSURL *usedURL = [NSURL URLWithString:self.stringFramerURL];
 
     NSURLRequest *requestFramer = [NSURLRequest requestWithURL:usedURL];
     [NSURLConnection sendAsynchronousRequest:requestFramer queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -359,7 +365,7 @@
             if (!self.isFramerOpenedAlready && timer) {
                 [self.timerSelector invalidate];
                 UIAlertAction *alertActionOpen = [UIAlertAction actionWithTitle:@"Open" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                    NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.132:8000/"]];
+                    NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:self.stringFramerURL]];
                     [self.webView loadRequest:requestURL];
                     [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
                     self.valueOfTimer = 10;
@@ -382,7 +388,7 @@
                 [self textFieldDisappear];
                 [self.timerSelector invalidate];
             } else if (!self.isFramerOpenedAlready && !timer) {
-                NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.132:8000/"]];
+                NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:self.stringFramerURL]];
                 [self.webView loadRequest:requestURL];
                 self.valueOfTimer = 10;
                 self.isFramerOpenedAlready = YES;
@@ -392,6 +398,33 @@
             }
         }
     }];
+}
+
+#pragma mark - Helper methods v.2
+
+- (NSString *)getIPAddress {
+
+    NSString *address = @"error";
+    struct ifaddrs *interfaces = nil;
+    struct ifaddrs *temp_addr = nil;
+    int success = 0;
+    success = getifaddrs(&interfaces);
+    if (success == 0) {
+        temp_addr = interfaces;
+        while (temp_addr != NULL) {
+            if (temp_addr->ifa_addr->sa_family == AF_INET) {
+                if ([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
+                    address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
+
+                }
+
+            }
+            temp_addr = temp_addr -> ifa_next;
+        }
+    }
+
+    freeifaddrs(interfaces);
+    return address;
 }
 
 @end

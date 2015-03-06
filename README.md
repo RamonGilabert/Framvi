@@ -12,6 +12,8 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 ## Upcoming features
 
 - Go back and forward through your pages.
+- Settings page with a modal appearence.
+- First time in app pagging.
 
 ## Featuring
 
