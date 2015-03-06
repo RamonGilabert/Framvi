@@ -28,8 +28,8 @@
 @property NSMutableArray *arrayOfWebsitesVisited;
 @property NSMutableArray *arrayOfSnapshots;
 @property int websitesVisited;
-@property UITapGestureRecognizer *tapGestureGoBack;
-@property UITapGestureRecognizer *tapGestureGoForward;
+@property UISwipeGestureRecognizer *tapGestureGoBack;
+@property UISwipeGestureRecognizer *tapGestureGoForward;
 
 #define FIRST_WEBSITE @"http://ramongilabert.com"
 
@@ -124,14 +124,12 @@
     self.arrayOfSnapshots = [NSMutableArray new];
     self.websitesVisited = 0;
 
-    self.tapGestureGoBack = [UITapGestureRecognizer new];
-    self.tapGestureGoBack.numberOfTapsRequired = 1;
+    self.tapGestureGoBack = [UISwipeGestureRecognizer new];
     self.tapGestureGoBack.delegate = self;
     [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoBack:)];
     [self.webView addGestureRecognizer:self.tapGestureGoBack];
 
-    self.tapGestureGoForward = [UITapGestureRecognizer new];
-    self.tapGestureGoForward.numberOfTapsRequired = 1;
+    self.tapGestureGoForward = [UISwipeGestureRecognizer new];
     self.tapGestureGoForward.delegate = self;
     [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoForward:)];
     [self.webView addGestureRecognizer:self.tapGestureGoForward];
@@ -143,13 +141,13 @@
 {
     [super viewDidAppear:animated];
 
-    [self checkFramer:0];
+    //[self checkFramer:0];
 
     [self.textFieldEnterAddress becomeFirstResponder];
 
     self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
 
-    self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
+    //self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
 }
 
 #pragma mark - Gesture recognizers
@@ -209,21 +207,20 @@
         self.webView.userInteractionEnabled = YES;
         [self.longTouchGestureRecognizer addTarget:self action:@selector(longPressGestureRecognizer:)];
     }
-
 }
 
-- (void)tapGestureGoBack:(UITapGestureRecognizer *)tapGestureRecognizer
+- (void)tapGestureGoBack:(UISwipeGestureRecognizer *)swipeGestureRecognizer
 {
-    CGPoint location = [tapGestureRecognizer locationInView:self.webView];
-
+    CGPoint location = [swipeGestureRecognizer locationInView:self.webView];
+    NSLog(@"%f", location.x);
     if ([self.webView canGoBack] && location.x < 20) {
 
     }
 }
 
-- (void)tapGestureGoForward:(UITapGestureRecognizer *)tapGestureRecognizer
+- (void)tapGestureGoForward:(UISwipeGestureRecognizer *)swipeGestureRecognizer
 {
-    CGPoint location = [tapGestureRecognizer locationInView:self.webView];
+    CGPoint location = [swipeGestureRecognizer locationInView:self.webView];
 
     if ([self.webView canGoForward] && location.x > self.deviceWidth - 20) {
 
