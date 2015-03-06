@@ -2,9 +2,22 @@
 
 A nice chrome-less solution to view FramerJS prototypes or another way to explore the net based on gestures.
 
+## Important features
+
+- Add the word Framer, framer or Test prototype in the bar, and it automatically opens Framer.
+- Perform a long press and move your finger, it opens your bar.
+- Automatically knows when you open Framer, it asks you if you want to open it.
+- Full viewer support
+
+## Upcoming features
+
+- Go back and forward through your pages.
+
 ## Featuring
 
-It adds gestures in it as swipe, tap, or pan with all the integration of webKit.
+1. Multiple gestures as swipes, long taps, simple taps.
+2. Fullscreen viewer.
+3. Smart type.
 
 ## Contribute
 

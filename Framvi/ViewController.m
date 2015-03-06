@@ -125,6 +125,7 @@
     self.websitesVisited = 0;
 
     self.tapGestureGoBack = [UISwipeGestureRecognizer new];
+    self.tapGestureGoBack.direction = UISwipeGestureRecognizerDirectionLeft;
     self.tapGestureGoBack.delegate = self;
     [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoBack:)];
     [self.webView addGestureRecognizer:self.tapGestureGoBack];
@@ -141,13 +142,13 @@
 {
     [super viewDidAppear:animated];
 
-    //[self checkFramer:0];
+    [self checkFramer:0];
 
     [self.textFieldEnterAddress becomeFirstResponder];
 
     self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
 
-    //self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
+    self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
 }
 
 #pragma mark - Gesture recognizers
@@ -296,7 +297,14 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if ([self.textFieldEnterAddress.text rangeOfString:@"http://"].location == NSNotFound && [self.textFieldEnterAddress.text rangeOfString:@"https://"].location != NSNotFound) {
+    if ([textField.text isEqualToString:@"Framer"] || [textField.text isEqualToString:@"framer"] || [textField.text isEqualToString:@"Test prototype"]) {
+        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.132:8000/"]];
+        [self.webView loadRequest:requestURL];
+        self.isFramerOpenedAlready = YES;
+        [self.textFieldEnterAddress resignFirstResponder];
+        [self textFieldDisappear];
+        [self.timerSelector invalidate];
+    } else if ([self.textFieldEnterAddress.text rangeOfString:@"http://"].location == NSNotFound && [self.textFieldEnterAddress.text rangeOfString:@"https://"].location != NSNotFound) {
         NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:self.textFieldEnterAddress.text]];
         [self.webView loadRequest:requestURL];
     } else if ([self.textFieldEnterAddress.text rangeOfString:@"http://"].location != NSNotFound && [self.textFieldEnterAddress.text rangeOfString:@"https://"].location == NSNotFound) {
@@ -341,55 +349,49 @@
 
 - (void)checkFramer:(NSTimer *)timer
 {
-    BOOL isAValidURL = [self isValidURL:[NSURL URLWithString:@"http://192.168.1.130:8000"]];
+    NSURL *usedURL = [NSURL URLWithString:@"http://192.168.1.132:8000/"];
 
-    if (!self.isFramerOpenedAlready && isAValidURL && timer) {
-        [self.timerSelector invalidate];
-        UIAlertAction *alertActionOpen = [UIAlertAction actionWithTitle:@"Open" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.130:8000/"]];
-            [self.webView loadRequest:requestURL];
-            [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
-            self.valueOfTimer = 10;
-            self.isFramerOpenedAlready = YES;
-            self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
-        }];
-        UIAlertAction *alertActionClose = [UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-            [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
-            self.valueOfTimer = 1;
-            self.isFramerOpenedAlready = NO;
-            self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
-        }];
-
-        [self.alertControllerOpenFramer addAction:alertActionOpen];
-        [self.alertControllerOpenFramer addAction:alertActionClose];
-
-        if (![self.alertControllerOpenFramer isFirstResponder]) {
-            [self presentViewController:self.alertControllerOpenFramer animated:YES completion:nil];
-        }
-
-        [self.textFieldEnterAddress resignFirstResponder];
-        [self textFieldDisappear];
-    } else if (!self.isFramerOpenedAlready && isAValidURL && !timer) {
-        NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.130:8000/"]];
-        [self.webView loadRequest:requestURL];
-        self.valueOfTimer = 10;
-        self.isFramerOpenedAlready = YES;
-        [self.textFieldEnterAddress resignFirstResponder];
-        [self textFieldDisappear];
-    }
-}
-
-- (BOOL)isValidURL:(NSURL *)usedURL
-{
     NSURLRequest *requestFramer = [NSURLRequest requestWithURL:usedURL];
-    NSHTTPURLResponse *response = nil;
-    NSError *error = nil;
-    [NSURLConnection sendSynchronousRequest:requestFramer returningResponse:&response error:&error];
-    if (error || response.statusCode == 404) {
-        return false;
-    } else {
-        return true;
-    }
+    [NSURLConnection sendAsynchronousRequest:requestFramer queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        if (connectionError) {
+
+        } else {
+            if (!self.isFramerOpenedAlready && timer) {
+                [self.timerSelector invalidate];
+                UIAlertAction *alertActionOpen = [UIAlertAction actionWithTitle:@"Open" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.132:8000/"]];
+                    [self.webView loadRequest:requestURL];
+                    [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
+                    self.valueOfTimer = 10;
+                    self.isFramerOpenedAlready = YES;
+                }];
+                UIAlertAction *alertActionClose = [UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                    [self.alertControllerOpenFramer dismissViewControllerAnimated:YES completion:nil];
+                    self.valueOfTimer = 1;
+                    self.isFramerOpenedAlready = NO;
+                }];
+
+                [self.alertControllerOpenFramer addAction:alertActionOpen];
+                [self.alertControllerOpenFramer addAction:alertActionClose];
+
+                if (![self.alertControllerOpenFramer isFirstResponder]) {
+                    [self presentViewController:self.alertControllerOpenFramer animated:YES completion:nil];
+                }
+
+                [self.textFieldEnterAddress resignFirstResponder];
+                [self textFieldDisappear];
+                [self.timerSelector invalidate];
+            } else if (!self.isFramerOpenedAlready && !timer) {
+                NSURLRequest *requestURL = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.132:8000/"]];
+                [self.webView loadRequest:requestURL];
+                self.valueOfTimer = 10;
+                self.isFramerOpenedAlready = YES;
+                [self.textFieldEnterAddress resignFirstResponder];
+                [self textFieldDisappear];
+                [self.timerSelector invalidate];
+            }
+        }
+    }];
 }
 
 @end
