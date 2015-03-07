@@ -148,19 +148,17 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self performSegueWithIdentifier:@"goFirstTimeInApp" sender:self];
     } else {
-        [self performSegueWithIdentifier:@"goFirstTimeInApp" sender:self];
+        NSString *stringOfLocalHost = [self getIPAddress];
+        self.stringFramerURL = [[@"http://" stringByAppendingString:stringOfLocalHost] stringByAppendingString:@":8000/"];
+
+        [self checkFramer:0];
+
+        [self.textFieldEnterAddress becomeFirstResponder];
+
+        self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
+
+        self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
     }
-
-    NSString *stringOfLocalHost = [self getIPAddress];
-    self.stringFramerURL = [[@"http://" stringByAppendingString:stringOfLocalHost] stringByAppendingString:@":8000/"];
-
-    [self checkFramer:0];
-
-    [self.textFieldEnterAddress becomeFirstResponder];
-
-    self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
-
-    self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
 }
 
 #pragma mark - Gesture recognizers
