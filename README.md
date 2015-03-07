@@ -2,7 +2,15 @@
 
 A nice chrome-less solution to view FramerJS prototypes or another way to explore the net based on gestures.
 
-## Important features
+## Featuring
+
+1. Multiple gestures as swipes, long taps, simple taps.
+2. Fullscreen viewer.
+3. Smart type.
+4. Local string host ip address.
+5. First time in app paging.
+
+## The app important things
 
 - Add the word Framer, framer or Test prototype in the bar, and it automatically opens Framer.
 - Perform a long press and move your finger, it opens your bar.
@@ -13,14 +21,6 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 
 - Go back and forward through your pages.
 - Settings page with a modal appearence.
-
-## Featuring
-
-1. Multiple gestures as swipes, long taps, simple taps.
-2. Fullscreen viewer.
-3. Smart type.
-4. Local string host ip address.
-5. First time in app paging.
 
 ## Contribute
 
