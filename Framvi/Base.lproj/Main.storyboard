@@ -19,10 +19,29 @@
                     </view>
                     <connections>
                         <segue destination="Axz-WO-hSt" kind="presentation" identifier="goFirstTimeInApp" id="JGO-Eb-hOG"/>
+                        <segue destination="C9O-ik-Gdv" kind="presentation" identifier="goSettings" id="9k8-Hr-omK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+        </scene>
+        <!--Settings View Controller-->
+        <scene sceneID="cbJ-Dj-DRg">
+            <objects>
+                <viewController id="C9O-ik-Gdv" customClass="SettingsViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="P50-O6-bqm"/>
+                        <viewControllerLayoutGuide type="bottom" id="qj8-Bw-gFk"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="lcQ-Di-qJS">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="F2Q-N9-awY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="879" y="777"/>
         </scene>
         <!--First Time View Controller-->
         <scene sceneID="ti6-df-lXT">

@@ -31,6 +31,7 @@
 @property UISwipeGestureRecognizer *tapGestureGoBack;
 @property UISwipeGestureRecognizer *tapGestureGoForward;
 @property NSString *stringFramerURL;
+@property UIButton *buttonGoToSettings;
 
 #define FIRST_WEBSITE @"http://ramongilabert.com"
 
@@ -126,15 +127,24 @@
     self.websitesVisited = 0;
 
     self.tapGestureGoBack = [UISwipeGestureRecognizer new];
-    self.tapGestureGoBack.direction = UISwipeGestureRecognizerDirectionLeft;
+    self.tapGestureGoBack.direction = UISwipeGestureRecognizerDirectionRight;
     self.tapGestureGoBack.delegate = self;
-    [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoBack:)];
+    [self.tapGestureGoBack addTarget:self action:@selector(tapGestureGoBack:)];
     [self.webView addGestureRecognizer:self.tapGestureGoBack];
 
     self.tapGestureGoForward = [UISwipeGestureRecognizer new];
+    self.tapGestureGoForward.direction = UISwipeGestureRecognizerDirectionLeft;
     self.tapGestureGoForward.delegate = self;
-    [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureGoForward:)];
+    [self.tapGestureGoForward addTarget:self action:@selector(tapGestureGoForward:)];
     [self.webView addGestureRecognizer:self.tapGestureGoForward];
+
+    self.buttonGoToSettings = [[UIButton alloc] initWithFrame:CGRectMake(10, self.deviceHeight, 50, 50)];
+    [self.buttonGoToSettings addTarget:self action:@selector(onGoToSettingsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonGoToSettings setImage:[UIImage imageNamed:@"settingsImage"] forState:UIControlStateNormal];
+    self.buttonGoToSettings.alpha = 0;
+    [self.view addSubview:self.buttonGoToSettings];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
 
     self.valueOfTimer = 1;
 }
@@ -158,6 +168,29 @@
         self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
 
         self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
+    }
+}
+
+#pragma mark - Keyboard methods
+
+- (void)keyboardWillChange:(NSNotification *)notification
+{
+    CGRect keyboardRect = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    keyboardRect = [self.view convertRect:keyboardRect fromView:nil];
+
+    if (keyboardRect.origin.y >= self.deviceHeight) {
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.buttonGoToSettings.frame = CGRectMake(10, self.deviceHeight, 50, 50);
+        } completion:^(BOOL finished) {
+            
+        }];
+    } else {
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.buttonGoToSettings.frame = CGRectMake(10, self.deviceHeight - keyboardRect.size.height - 60, 50, 50);
+            self.buttonGoToSettings.alpha = 0.7;
+        } completion:^(BOOL finished) {
+            
+        }];
     }
 }
 
@@ -223,19 +256,24 @@
 - (void)tapGestureGoBack:(UISwipeGestureRecognizer *)swipeGestureRecognizer
 {
     CGPoint location = [swipeGestureRecognizer locationInView:self.webView];
-    NSLog(@"%f", location.x);
     if ([self.webView canGoBack] && location.x < 20) {
-
+        [self.webView goBack];
     }
 }
 
 - (void)tapGestureGoForward:(UISwipeGestureRecognizer *)swipeGestureRecognizer
 {
     CGPoint location = [swipeGestureRecognizer locationInView:self.webView];
-
     if ([self.webView canGoForward] && location.x > self.deviceWidth - 20) {
-
+        [self.webView goForward];
     }
+}
+
+#pragma mark - Go settings
+
+- (IBAction)onGoToSettingsButtonPressed:(UIButton *)sender
+{
+    [self performSegueWithIdentifier:@"goSettings" sender:self];
 }
 
 #pragma mark - WebView methods

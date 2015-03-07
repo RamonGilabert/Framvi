@@ -15,11 +15,11 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 - Add the word Framer, framer or Test prototype in the bar, and it automatically opens Framer.
 - Perform a long press and move your finger, it opens your bar.
 - Automatically knows when you open Framer, it asks you if you want to open it.
-- Full viewer support
+- Full viewer support.
+- Go back and forward by swiping from the left side and right side of the device.
 
 ## Upcoming features
 
-- Go back and forward through your pages.
 - Settings page with a modal appearence.
 
 ## Contribute
