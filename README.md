@@ -10,7 +10,7 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 4. Local string host ip address.
 5. First time in app paging.
 6. NSUserDefaults usage, customizable settings.
-7. Settings page with remembered values.
+7. Settings page with values saved in memory.
 
 ## The app important things
 
@@ -19,10 +19,7 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 - Automatically knows when you open Framer, it asks you if you want to open it.
 - Full viewer support.
 - Go back and forward by swiping from the left side and right side of the device.
-
-## Upcoming features
-
-- Settings page with a modal appearence.
+- Settings will let you control three important aspects of the app, it will automatically update the app once they change.
 
 ## Contribute
 

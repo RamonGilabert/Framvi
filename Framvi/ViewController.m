@@ -105,12 +105,16 @@
     [self.tapGestureBlurrEffect addTarget:self action:@selector(tapGestureBlurrEffect:)];
     [self.blurrViewBar addGestureRecognizer:self.tapGestureBlurrEffect];
 
-    self.tapGestureThreeFingers = [UITapGestureRecognizer new];
-    self.tapGestureThreeFingers.numberOfTouchesRequired = 3;
-    self.tapGestureThreeFingers.numberOfTapsRequired = 1;
-    self.tapGestureThreeFingers.delegate = self;
-    [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureRecognizerThreeFingers:)];
-    [self.webView addGestureRecognizer:self.tapGestureThreeFingers];
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasLaunchedOnce"] || [[NSUserDefaults standardUserDefaults] boolForKey:@"threeFinger"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"threeFinger"];
+        self.tapGestureThreeFingers = [UITapGestureRecognizer new];
+        self.tapGestureThreeFingers.numberOfTouchesRequired = 3;
+        self.tapGestureThreeFingers.numberOfTapsRequired = 1;
+        self.tapGestureThreeFingers.delegate = self;
+        [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureRecognizerThreeFingers:)];
+        [self.webView addGestureRecognizer:self.tapGestureThreeFingers];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
 
     self.progressBar = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
     self.progressBar.frame = CGRectMake(0, 0, self.deviceWidth, 10);
@@ -125,18 +129,6 @@
     self.arrayOfWebsitesVisited = [NSMutableArray new];
     self.arrayOfSnapshots = [NSMutableArray new];
     self.websitesVisited = 0;
-
-    self.tapGestureGoBack = [UISwipeGestureRecognizer new];
-    self.tapGestureGoBack.direction = UISwipeGestureRecognizerDirectionRight;
-    self.tapGestureGoBack.delegate = self;
-    [self.tapGestureGoBack addTarget:self action:@selector(tapGestureGoBack:)];
-    [self.webView addGestureRecognizer:self.tapGestureGoBack];
-
-    self.tapGestureGoForward = [UISwipeGestureRecognizer new];
-    self.tapGestureGoForward.direction = UISwipeGestureRecognizerDirectionLeft;
-    self.tapGestureGoForward.delegate = self;
-    [self.tapGestureGoForward addTarget:self action:@selector(tapGestureGoForward:)];
-    [self.webView addGestureRecognizer:self.tapGestureGoForward];
 
     self.buttonGoToSettings = [[UIButton alloc] initWithFrame:CGRectMake(10, self.deviceHeight, 50, 50)];
     [self.buttonGoToSettings addTarget:self action:@selector(onGoToSettingsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -164,13 +156,49 @@
         NSString *stringOfLocalHost = [self getIPAddress];
         self.stringFramerURL = [[@"http://" stringByAppendingString:stringOfLocalHost] stringByAppendingString:@":8000/"];
 
-        [self checkFramer:0];
-
         [self.textFieldEnterAddress becomeFirstResponder];
 
-        self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoconnectFramer"]) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"autoconnectFramer"];
+            [self checkFramer:0];
+            self.alertControllerOpenFramer = [UIAlertController alertControllerWithTitle:@"Framer active" message:@"It appears that FramerJS is opened, do you want to test your prototype?" preferredStyle:UIAlertControllerStyleAlert];
+            self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        } else {
+            [self.timerSelector invalidate];
+        }
 
-        self.timerSelector = [NSTimer scheduledTimerWithTimeInterval:self.valueOfTimer target:self selector:@selector(checkFramer:) userInfo:nil repeats:YES];
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasLaunchedOnce"] || [[NSUserDefaults standardUserDefaults] boolForKey:@"swipeLeftRight"]) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"swipeLeftRight"];
+            self.tapGestureGoBack = [UISwipeGestureRecognizer new];
+            self.tapGestureGoBack.direction = UISwipeGestureRecognizerDirectionRight;
+            self.tapGestureGoBack.delegate = self;
+            [self.tapGestureGoBack addTarget:self action:@selector(tapGestureGoBack:)];
+            [self.webView addGestureRecognizer:self.tapGestureGoBack];
+
+            self.tapGestureGoForward = [UISwipeGestureRecognizer new];
+            self.tapGestureGoForward.direction = UISwipeGestureRecognizerDirectionLeft;
+            self.tapGestureGoForward.delegate = self;
+            [self.tapGestureGoForward addTarget:self action:@selector(tapGestureGoForward:)];
+            [self.webView addGestureRecognizer:self.tapGestureGoForward];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        } else {
+            [self.webView removeGestureRecognizer:self.tapGestureGoBack];
+            [self.webView removeGestureRecognizer:self.tapGestureGoForward];
+        }
+
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasLaunchedOnce"] || [[NSUserDefaults standardUserDefaults] boolForKey:@"threeFinger"]) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"threeFinger"];
+            self.tapGestureThreeFingers = [UITapGestureRecognizer new];
+            self.tapGestureThreeFingers.numberOfTouchesRequired = 3;
+            self.tapGestureThreeFingers.numberOfTapsRequired = 1;
+            self.tapGestureThreeFingers.delegate = self;
+            [self.tapGestureThreeFingers addTarget:self action:@selector(tapGestureRecognizerThreeFingers:)];
+            [self.webView addGestureRecognizer:self.tapGestureThreeFingers];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        } else {
+            [self.webView removeGestureRecognizer:self.tapGestureThreeFingers];
+        }
     }
 }
 
