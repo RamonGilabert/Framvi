@@ -155,6 +155,9 @@
 
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasLaunchedOnce"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasLaunchedOnce"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"threeFinger"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"autoconnectFramer"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"swipeLeftRight"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self performSegueWithIdentifier:@"goFirstTimeInApp" sender:self];
     } else {

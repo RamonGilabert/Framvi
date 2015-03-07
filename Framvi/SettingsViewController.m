@@ -46,6 +46,23 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (IBAction)onSwitcherChange:(UISwitch *)sender
+{
+    CGPoint switcherPosition = [sender convertPoint:CGPointZero toView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:switcherPosition];
+
+    if (indexPath.row == 0) {
+        [[NSUserDefaults standardUserDefaults] setBool:![[NSUserDefaults standardUserDefaults] boolForKey:@"threeFinger"] forKey:@"threeFinger"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    } else if (indexPath.row == 1) {
+        [[NSUserDefaults standardUserDefaults] setBool:![[NSUserDefaults standardUserDefaults] boolForKey:@"autoconnectFramer"] forKey:@"autoconnectFramer"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    } else if (indexPath.row == 2) {
+        [[NSUserDefaults standardUserDefaults] setBool:![[NSUserDefaults standardUserDefaults] boolForKey:@"swipeLeftRight"] forKey:@"swipeLeftRight"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+}
+
 #pragma mark - UITableView methods
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -74,18 +91,36 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
     UISwitch *switcherToRemember = [[UISwitch alloc] initWithFrame:CGRectMake(self.deviceWidth - 70, (cell.frame.size.height - 20)/2, 100, 50)];
-    switcherToRemember.on = YES;
+    [switcherToRemember addTarget:self action:@selector(onSwitcherChange:) forControlEvents:UIControlEventValueChanged];
     [cell addSubview:switcherToRemember];
 
     if (indexPath.row == 0) {
         cell.textLabel.text = @"Three finger tap";
         cell.detailTextLabel.text = @"To show the top bar";
+
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"threeFinger"]) {
+            switcherToRemember.on = YES;
+        } else {
+            switcherToRemember.on = NO;
+        }
     } else if (indexPath.row == 1) {
         cell.textLabel.text = @"Autoconnect to FramerJS";
         cell.detailTextLabel.text = @"Say it to you once you open it";
+
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoconnectFramer"]) {
+            switcherToRemember.on = YES;
+        } else {
+            switcherToRemember.on = NO;
+        }
     } else if (indexPath.row == 2) {
         cell.textLabel.text = @"Swipe left and right";
         cell.detailTextLabel.text = @"To go back and forward";
+
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"swipeLeftRight"]) {
+            switcherToRemember.on = YES;
+        } else {
+            switcherToRemember.on = NO;
+        }
     }
 
     return cell;

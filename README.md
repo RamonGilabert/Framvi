@@ -9,6 +9,8 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 3. Smart type.
 4. Local string host ip address.
 5. First time in app paging.
+6. NSUserDefaults usage, customizable settings.
+7. Settings page with remembered values.
 
 ## The app important things
 
