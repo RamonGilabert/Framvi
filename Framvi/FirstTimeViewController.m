@@ -1,5 +1,4 @@
 #import "FirstTimeViewController.h"
-#import "PagingViewController.h"
 
 @interface FirstTimeViewController () <UIScrollViewDelegate>
 
@@ -29,10 +28,16 @@
     self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.deviceWidth, self.deviceHeight)];
     self.scrollView.pagingEnabled = YES;
     self.scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.scrollView.frame) * 4, CGRectGetHeight(self.scrollView.frame));
-    self.scrollView.showsHorizontalScrollIndicator = YES;
-    self.scrollView.showsVerticalScrollIndicator = YES;
+    self.scrollView.showsHorizontalScrollIndicator = NO;
+    self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.scrollsToTop = NO;
     self.scrollView.delegate = self;
+    [self.view addSubview:self.scrollView];
+
+    self.pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, self.deviceHeight - 70, self.deviceWidth, 10)];
+    self.pageControl.numberOfPages = 4;
+    self.pageControl.currentPage = 0;
+    [self.view addSubview:self.pageControl];
 
     [self loadScrollViewWithPage:0];
     [self loadScrollViewWithPage:1];
@@ -40,25 +45,34 @@
 
 - (void)loadScrollViewWithPage:(NSUInteger)page
 {
-//    if (page >= self.contentList.count)
-//        return;
-
-    PagingViewController *controller = [self.arrayOfViewControllers objectAtIndex:page];
-
-    if ((NSNull *)controller == [NSNull null]) {
-        controller = [[PagingViewController alloc] initWithPageNumber:page];
-        [self.arrayOfViewControllers replaceObjectAtIndex:page withObject:controller];
+    if (page >= 4) {
+        return;
     }
 
-    if (controller.view.superview == nil) {
+    UIView *viewScrollView = [self.arrayOfViewControllers objectAtIndex:page];
+
+    if ((NSNull *)viewScrollView == [NSNull null]) {
+        viewScrollView = [UIView new];
+        [self.arrayOfViewControllers replaceObjectAtIndex:page withObject:viewScrollView];
+    }
+
+    if (viewScrollView.superview == nil) {
         CGRect frame = self.scrollView.frame;
         frame.origin.x = CGRectGetWidth(frame) * page;
         frame.origin.y = 0;
-        controller.view.frame = frame;
+        viewScrollView.frame = frame;
 
-        [self addChildViewController:controller];
-        [self.scrollView addSubview:controller.view];
-        [controller didMoveToParentViewController:self];
+        if (page == 0) {
+            viewScrollView.backgroundColor = [UIColor blueColor];
+        } else if (page == 1) {
+            viewScrollView.backgroundColor = [UIColor blackColor];
+        } else if (page == 2) {
+            viewScrollView.backgroundColor = [UIColor redColor];
+        } else if (page == 3) {
+            viewScrollView.backgroundColor = [UIColor yellowColor];
+        }
+
+        [self.scrollView addSubview:viewScrollView];
     }
 }
 
