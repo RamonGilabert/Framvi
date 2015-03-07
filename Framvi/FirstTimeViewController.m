@@ -37,6 +37,9 @@
     self.pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, self.deviceHeight - 70, self.deviceWidth, 10)];
     self.pageControl.numberOfPages = 4;
     self.pageControl.currentPage = 0;
+    self.pageControl.userInteractionEnabled = NO;
+    self.pageControl.pageIndicatorTintColor = [UIColor lightGrayColor];
+    self.pageControl.currentPageIndicatorTintColor = [UIColor darkGrayColor];
     [self.view addSubview:self.pageControl];
 
     [self loadScrollViewWithPage:0];
@@ -63,13 +66,55 @@
         viewScrollView.frame = frame;
 
         if (page == 0) {
-            viewScrollView.backgroundColor = [UIColor blueColor];
+            UILabel *labelFirstView = [[UILabel alloc] initWithFrame:CGRectMake(30, self.deviceHeight - self.deviceHeight/2.3, self.deviceWidth - 60, 100)];
+            labelFirstView.textAlignment = NSTextAlignmentCenter;
+            labelFirstView.font = [UIFont fontWithName:@"AvenirNext-regular" size:19];
+            labelFirstView.text = @"Welcome to Framvi, the best chromeless solution for a web browser.";
+            labelFirstView.numberOfLines = 10;
+            [viewScrollView addSubview:labelFirstView];
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.deviceWidth + self.deviceWidth/3)/4, self.deviceHeight/5, self.deviceWidth/3, self.deviceHeight/4)];
+            imageView.image = [UIImage imageNamed:@"First"];
+            imageView.contentMode = UIViewContentModeScaleAspectFill;
+            [viewScrollView addSubview:imageView];
         } else if (page == 1) {
-            viewScrollView.backgroundColor = [UIColor blackColor];
+            UILabel *labelFirstView = [[UILabel alloc] initWithFrame:CGRectMake(30, self.deviceHeight - self.deviceHeight/2.3, self.deviceWidth - 60, 100)];
+            labelFirstView.textAlignment = NSTextAlignmentCenter;
+            labelFirstView.font = [UIFont fontWithName:@"AvenirNext-regular" size:19];
+            labelFirstView.text = @"Use a single long tap, or three simple taps to show the top bar.";
+            labelFirstView.numberOfLines = 10;
+            [viewScrollView addSubview:labelFirstView];
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.deviceWidth + self.deviceWidth/3)/4, self.deviceHeight/5, self.deviceWidth/3, self.deviceHeight/4)];
+            imageView.image = [UIImage imageNamed:@"Second"];
+            imageView.contentMode = UIViewContentModeScaleAspectFill;
+            [viewScrollView addSubview:imageView];
         } else if (page == 2) {
-            viewScrollView.backgroundColor = [UIColor redColor];
+            UILabel *labelFirstView = [[UILabel alloc] initWithFrame:CGRectMake(30, self.deviceHeight - self.deviceHeight/2.3, self.deviceWidth - 60, 100)];
+            labelFirstView.textAlignment = NSTextAlignmentCenter;
+            labelFirstView.font = [UIFont fontWithName:@"AvenirNext-regular" size:19];
+            labelFirstView.text = @"Swipe left and right to go back and forward in your history.";
+            labelFirstView.numberOfLines = 10;
+            [viewScrollView addSubview:labelFirstView];
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.deviceWidth + self.deviceWidth/3)/4, self.deviceHeight/5, self.deviceWidth/3, self.deviceHeight/4)];
+            imageView.image = [UIImage imageNamed:@"Third"];
+            imageView.contentMode = UIViewContentModeScaleAspectFill;
+            [viewScrollView addSubview:imageView];
         } else if (page == 3) {
-            viewScrollView.backgroundColor = [UIColor yellowColor];
+            UILabel *labelFirstView = [[UILabel alloc] initWithFrame:CGRectMake(30, self.deviceHeight - self.deviceHeight/2.3, self.deviceWidth - 60, 100)];
+            labelFirstView.textAlignment = NSTextAlignmentCenter;
+            labelFirstView.font = [UIFont fontWithName:@"AvenirNext-regular" size:19];
+            labelFirstView.text = @"Edit your preferences, gestures, options.";
+            labelFirstView.numberOfLines = 10;
+            [viewScrollView addSubview:labelFirstView];
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.deviceWidth + self.deviceWidth/3)/4, self.deviceHeight/5, self.deviceWidth/3, self.deviceHeight/4)];
+            imageView.image = [UIImage imageNamed:@"Fourth"];
+            imageView.contentMode = UIViewContentModeScaleAspectFill;
+            [viewScrollView addSubview:imageView];
+            UIButton *buttonGoBrowser = [[UIButton alloc] initWithFrame:CGRectMake(self.deviceWidth/4, self.deviceHeight - self.deviceHeight/3.8, self.deviceWidth - self.deviceWidth/2, 40)];
+            buttonGoBrowser.backgroundColor = [UIColor colorWithRed:0.73 green:0.27 blue:0.46 alpha:1];
+            buttonGoBrowser.layer.cornerRadius = 14;
+            [buttonGoBrowser setTitle:@"Start browsing!" forState:UIControlStateNormal];
+            [buttonGoBrowser addTarget:self action:@selector(onGoButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            [viewScrollView addSubview:buttonGoBrowser];
         }
 
         [self.scrollView addSubview:viewScrollView];
@@ -86,5 +131,7 @@
     [self loadScrollViewWithPage:page];
     [self loadScrollViewWithPage:page + 1];
 }
+
+#pragma mark - IBActions
 
 @end

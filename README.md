@@ -13,7 +13,6 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 
 - Go back and forward through your pages.
 - Settings page with a modal appearence.
-- First time in app pagging.
 
 ## Featuring
 
@@ -21,7 +20,7 @@ A nice chrome-less solution to view FramerJS prototypes or another way to explor
 2. Fullscreen viewer.
 3. Smart type.
 4. Local string host ip address.
-5. First time in app onboarding.
+5. First time in app paging.
 
 ## Contribute
 
