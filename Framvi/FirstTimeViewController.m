@@ -109,7 +109,7 @@
             imageView.image = [UIImage imageNamed:@"Fourth"];
             imageView.contentMode = UIViewContentModeScaleAspectFill;
             [viewScrollView addSubview:imageView];
-            UIButton *buttonGoBrowser = [[UIButton alloc] initWithFrame:CGRectMake(self.deviceWidth/4, self.deviceHeight - self.deviceHeight/3.8, self.deviceWidth - self.deviceWidth/2, 40)];
+            UIButton *buttonGoBrowser = [[UIButton alloc] initWithFrame:CGRectMake(self.deviceWidth/4, self.deviceHeight - self.deviceHeight/3.8, self.deviceWidth - self.deviceWidth/2, 50)];
             buttonGoBrowser.backgroundColor = [UIColor colorWithRed:0.73 green:0.27 blue:0.46 alpha:1];
             buttonGoBrowser.layer.cornerRadius = 14;
             [buttonGoBrowser setTitle:@"Start browsing!" forState:UIControlStateNormal];
@@ -133,5 +133,10 @@
 }
 
 #pragma mark - IBActions
+
+- (IBAction)onGoButtonPressed:(UIButton *)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 @end
